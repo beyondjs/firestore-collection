@@ -3,7 +3,7 @@
 		"dockerfile": "./Dockerfile"
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [],
+	"forwardPorts": [6600],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"customizations": {
 		// Configure properties specific to VS Code.
