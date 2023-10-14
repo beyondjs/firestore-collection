@@ -1,5 +1,5 @@
 {
-	"name": "data/firestore-db",
+	"name": "firestore-db",
 	"platforms": ["node"],
 	"bundle": "ts",
 	"files": "*"
