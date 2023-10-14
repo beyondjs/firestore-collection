@@ -1,0 +1,6 @@
+{
+	"name": "data/firestore-db",
+	"platforms": ["node"],
+	"bundle": "ts",
+	"files": "*"
+}
