@@ -1,3 +1,3 @@
 const BEE = require('@beyond-js/bee');
 
-BEE('http://localhost:6598', { inspect: 4000 });
+BEE('http://localhost:6000', { inspect: 4000 });
