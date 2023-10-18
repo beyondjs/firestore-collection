@@ -19,7 +19,7 @@ operations in Firestore.
 To include this module in your project, import it as follows:
 
 ```typescript
-import { Collection } from '@aimpact/ailearn-api/db';
+import { Collection } from '@beyond-js/firestore-collection/collection';
 ```
 
 ### Initialization

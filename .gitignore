@@ -1,2 +1,5 @@
-node_modules
 .beyond
+credentials
+node_modules/
+!modules/node_modules/
+test

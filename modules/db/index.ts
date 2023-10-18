@@ -7,6 +7,8 @@ import { getFirestore } from 'firebase-admin/firestore';
 
 const file = join(process.cwd(), './credentials/gcloud.json');
 
+console.log('file', file);
+
 const specs: { credential?: Credential } = {};
 specs.credential = fs.existsSync(file) ? admin.credential.cert(file) : void 0;
 initializeApp(specs.credential ? specs : void 0);

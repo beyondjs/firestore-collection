@@ -1,0 +1,6 @@
+{
+	"name": "db",
+	"platforms": ["node"],
+	"bundle": "ts",
+	"files": "*"
+}

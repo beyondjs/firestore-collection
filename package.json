@@ -1,8 +1,9 @@
 {
-	"name": "@beyondjs/firestore-db",
-	"version": "1.0.0",
-	"title": "",
-	"description": "",
+	"name": "@beyond-js/firestore-collection",
+	"version": "0.0.1",
+	"title": "BeyondJS Firestore Collection Package",
+	"description": "The Collections module provides a TypeScript class for simplifying interactions with Firestore collections and documents.",
+	"repository": "https://github.com/beyondjs/firestore-collection",
 	"license": "MIT",
 	"scripts": {
 		"start": "node --enable-source-maps runners/empty.js"
@@ -12,6 +13,7 @@
 	},
 	"dependencies": {
 		"@beyond-js/kernel": "~0.1.8",
+		"@beyond-js/response": "~0.0.1",
 		"dotenv": "^16.0.3",
 		"firebase-admin": "^11.10.1"
 	},
@@ -27,7 +29,9 @@
 				"environment": "local",
 				"platform": "node",
 				"ports": {
-					"bundles": 6000
+					"bundles": 8000,
+					"http": 8001,
+					"inspect": 8002
 				}
 			},
 			{
@@ -38,7 +42,7 @@
 					"compiler": "tsc"
 				},
 				"ports": {
-					"bundles": 6600
+					"bundles": 8800
 				}
 			}
 		]
