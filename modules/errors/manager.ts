@@ -1,7 +1,7 @@
 import { ErrorManager } from '@beyond-js/response/main';
 
-export /*bundle*/ class DataErrorManager extends ErrorManager {
+export /*bundle*/ class FirestoreErrorManager extends ErrorManager {
 	get is() {
-		return true;
+		return 'firestore-collection';
 	}
 }

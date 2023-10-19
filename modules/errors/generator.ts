@@ -1,4 +1,4 @@
-import { DataErrorManager } from './manager';
+import { FirestoreErrorManager } from './manager';
 
 export /*bundle*/ enum ErrorCodes {
 	internalError = 1,
@@ -8,11 +8,11 @@ export /*bundle*/ enum ErrorCodes {
 
 export /*bundle*/ class ErrorGenerator {
 	static internalError(exc?: Error) {
-		return new DataErrorManager(ErrorCodes.internalError, 'Internal server error', exc);
+		return new FirestoreErrorManager(ErrorCodes.internalError, 'Internal server error', exc);
 	}
 
 	static documentNotFound(collectionName: string, documentId: string, exc?: Error) {
-		return new DataErrorManager(
+		return new FirestoreErrorManager(
 			ErrorCodes.internalError,
 			`Error getting document id "${documentId}" from "${collectionName}" collection`,
 			exc
@@ -20,7 +20,7 @@ export /*bundle*/ class ErrorGenerator {
 	}
 
 	static documentNotSaved(collectionName: string, documentId: string, exc?: Error) {
-		return new DataErrorManager(
+		return new FirestoreErrorManager(
 			ErrorCodes.documentNotSaved,
 			`Error storing document id "${documentId}" on "${collectionName}" collection`,
 			exc

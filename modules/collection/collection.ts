@@ -3,14 +3,14 @@ import { Response } from '@beyond-js/response/main';
 import { ErrorGenerator } from '@beyond-js/firestore-collection/errors';
 import { db } from '@beyond-js/firestore-collection/db';
 import { CollectionBatch } from './batch';
-import type { DataErrorManager } from '@beyond-js/firestore-collection/errors';
+import type { FirestoreErrorManager } from '@beyond-js/firestore-collection/errors';
 
 export /*bundle*/ interface ICollectionDataResponse<DataType> {
 	doc?: DocumentReference<DataType>;
 	snapshot?: DocumentSnapshot<DataType>;
 	exists?: boolean;
 	data?: DataType;
-	error?: DataErrorManager;
+	error?: FirestoreErrorManager;
 }
 
 export /*bundle*/ type CollectionResponseType<DataType> = Response<ICollectionDataResponse<DataType>>;
