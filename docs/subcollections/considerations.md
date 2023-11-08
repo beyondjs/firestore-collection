@@ -1,4 +1,4 @@
-## Considerations for Naming Subcollections
+# Considerations for Naming Subcollections
 
 When designing the structure of collections and subcollections in Firestore, it's important to be aware of certain
 limitations that can affect the way you access nested data. One such limitation is related to the naming of
@@ -9,7 +9,7 @@ within the `params.parents` object must be taken into account to ensure a smooth
 issues with data retrieval. By following these best practices, you can design a robust and scalable Firestore structure
 that avoids the pitfalls of naming collisions.
 
-### Limitation of Identical Subcollection Names
+## Limitation of Identical Subcollection Names
 
 The `params.parents` object, which is of type `Record<string, string>`, is used to map parent collection names to their
 document IDs. Since object keys in JavaScript (and by extension, TypeScript) must be unique, this presents a limitation:
@@ -24,7 +24,7 @@ specify the parents for the `Likes` subcollection, you would not be able to dist
 subcollections because they have the same name. The record could only store one entry for `Comments`, thus leading to
 ambiguity and potential data access issues.
 
-### Best Practices for Naming
+## Best Practices for Naming
 
 To avoid this limitation, it is crucial to design your Firestore structure with unique names for each collection and
 subcollection within the hierarchy. Here are some best practices to consider:
@@ -42,3 +42,4 @@ subcollection within the hierarchy. Here are some best practices to consider:
 -   **Using Prefixes or Suffixes**: Incorporate prefixes or suffixes to distinguish between similar subcollections. For
     instance, `InitialComments` and `ReplyComments` could serve to differentiate two types of comments within the data
     model.
+s
