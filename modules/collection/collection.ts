@@ -18,13 +18,13 @@ export /*bundle*/ type CollectionDatasetResponseType<DataType> = Response<IColle
 
 interface IDataParams {
 	id: string;
-	parent?: string;
+	parents?: Record<string, string>;
 	transaction?: Transaction;
 }
 
 interface IDatasetParams {
 	ids: string[];
-	parent?: string;
+	parents?: Record<string, string>;
 	transaction?: Transaction;
 }
 
@@ -43,6 +43,9 @@ export /*bundle*/ class Collection<DataType> {
 	}
 
 	#parent?: Collection<any>;
+	get parent() {
+		return this.#parent;
+	}
 
 	constructor(name: string, parent?: Collection<any>) {
 		this.#name = name;
@@ -54,57 +57,63 @@ export /*bundle*/ class Collection<DataType> {
 	 * @param params
 	 * @returns
 	 */
-	col(params?: { parent?: string }): CollectionReference<DataType> {
+	col(params?: { parents?: Record<string, string> }): CollectionReference<DataType> {
 		params = params ? params : {};
-		const { parent } = this.#params(params);
-		if (!parent) return <CollectionReference<DataType>>db.collection(this.#name);
+		const { parents } = this.#params(Object.assign({ col: true }, params));
+		if (!parents) return <CollectionReference<DataType>>db.collection(this.#name);
 
-		return <CollectionReference<DataType>>this.#parent!.col({ parent }).doc(parent).collection(this.#name);
+		const docId = parents[this.#name];
+		return <CollectionReference<DataType>>this.#parent!.col({ parents }).doc(docId).collection(this.#name);
 	}
 
 	/**
-	 * Validates and returns the 'id' and 'parent' parameters.
+	 * Validates and returns the 'id' and 'parents' parameters.
 	 *
-	 * This method ensures the 'parent' parameter is correctly provided based on whether the collection is intended
+	 * This method ensures the 'parents' parameter is correctly provided based on whether the collection is intended
 	 * to be a sub-collection.
 	 *
-	 * - Throws an error if 'parent' is provided but the collection is not a sub-collection.
-	 * - Throws an error if 'parent' is not provided but the collection is a sub-collection.
+	 * - Throws an error if 'parents' is provided but the collection is not a sub-collection.
+	 * - Throws an error if 'parents' is not provided but the collection is a sub-collection.
 	 *
-	 * @param params Object containing optional 'id' and 'parent' fields.
-	 * @returns An object containing the validated 'id' and 'parent' fields.
+	 * @param params Object containing optional 'id' and 'parents' fields.
+	 * @returns An object containing the validated 'id' and 'parents' fields.
 	 */
-	#params(params: { id?: string; parent?: string }) {
-		const { id, parent } = params;
+	#params(params: { id?: string; parents?: Record<string, string>; col?: boolean }) {
+		const { id, parents, col } = params;
 
-		if (!id) throw new Error('Parameter "id" was expected but not received.');
+		if (!col && !id) throw new Error('Parameter "id" was expected but not received.');
 
-		// If 'parent' is provided but the collection isn't a sub-collection, throw an error.
-		// This ensures that 'parent' is only provided for sub-collections.
-		if (parent && !this.#parent) {
-			throw new Error(
-				'The parameter "parent" was received, but it should only be provided if the collection is a subcollection.'
-			);
+		// Check the parents are correctly set if current collection is a subcollection
+		if (this.#parent) {
+			let parent: Collection<any> = this;
+
+			// If 'parents' is not provided but the collection is a sub-collection, throw an error.
+			// This ensures that 'parents' must be provided when the collection is a sub-collection.
+			if (!parents) {
+				throw new Error(
+					'The parameter "parents" was not received, but it should only be provided if the collection is not a subcollection.'
+				);
+			}
+
+			while (parent) {
+				parent = parent.parent;
+				if (!parents.hasOwnProperty(parent.name) || typeof parents[parent.name] !== 'string') {
+					throw new Error(`Id of parent collection "${parent.name}" not set`);
+				}
+			}
 		}
 
-		// If 'parent' is not provided but the collection is a sub-collection, throw an error.
-		// This ensures that 'parent' must be provided when the collection is a sub-collection.
-		if (!parent && this.#parent) {
-			throw new Error(
-				'The parameter "parent" was not received, but it should only be provided if the collection is not a subcollection.'
-			);
-		}
-		return { id, parent };
+		return { id, parents };
 	}
 
-	doc(params: { id: string; parent?: string }): DocumentReference<DataType> {
+	doc(params: { id: string; parents?: Record<string, string> }): DocumentReference<DataType> {
 		const { id } = this.#params(params);
 		return this.col(params).doc(id!);
 	}
 
 	async snapshot(params: {
 		id: string;
-		parent?: string;
+		parents?: Record<string, string>;
 		transaction?: Transaction;
 	}): Promise<Response<{ doc?: DocumentReference<DataType>; snapshot?: DocumentSnapshot<DataType> }>> {
 		const { transaction } = params;
@@ -139,24 +148,24 @@ export /*bundle*/ class Collection<DataType> {
 	}
 
 	async dataset(params: IDatasetParams): Promise<CollectionDatasetResponseType<DataType>> {
-		const { ids, parent, transaction } = params;
+		const { ids, parents, transaction } = params;
 
 		const promises: Promise<Response<ICollectionDataResponse<DataType>>>[] = [];
-		ids.forEach(id => promises.push(this.data({ id, parent, transaction })));
+		ids.forEach(id => promises.push(this.data({ id, parents, transaction })));
 		return await Promise.all(promises);
 	}
 
 	async set(params: {
 		id?: string;
-		parent?: string;
+		parents?: Record<string, string>;
 		data: DataType;
 		transaction?: Transaction;
 	}): Promise<Response<{ stored: boolean }>> {
-		const { transaction, parent, data } = params;
+		const { transaction, parents, data } = params;
 		const id = params.id ? params.id : (<any>params.data)?.id;
-		this.#params({ id, parent });
+		this.#params({ id, parents });
 
-		const doc = this.doc({ id, parent });
+		const doc = this.doc({ id, parents });
 
 		try {
 			await (transaction ? transaction.set(doc, data) : doc.set(data));
@@ -169,15 +178,15 @@ export /*bundle*/ class Collection<DataType> {
 
 	async merge(params: {
 		id?: string;
-		parent?: string;
+		parents?: Record<string, string>;
 		data: Partial<DataType>;
 		transaction?: Transaction;
 	}): Promise<Response<{ stored: boolean }>> {
-		const { transaction, parent, data } = params;
+		const { transaction, parents, data } = params;
 		const id = params.id ? params.id : (<any>params.data)?.id;
-		this.#params({ id, parent });
+		this.#params({ id, parents });
 
-		const doc = this.doc({ id, parent });
+		const doc = this.doc({ id, parents });
 
 		try {
 			await (transaction ? transaction.set(doc, data, { merge: true }) : doc.set(data, { merge: true }));
@@ -190,19 +199,23 @@ export /*bundle*/ class Collection<DataType> {
 }
 
 export /*bundle*/ class SubCollection<DataType> extends Collection<DataType> {
-	col(params: { parent: string }) {
+	constructor(name: string, parent: Collection<any>) {
+		super(name, parent);
+	}
+
+	col(params: { parents: Record<string, string> }) {
 		return super.col(params);
 	}
 
-	doc(params: { id: string; parent: string; transaction?: Transaction }) {
+	doc(params: { id: string; parents: Record<string, string>; transaction?: Transaction }) {
 		return super.doc(params);
 	}
 
-	async snapshot(params: { id: string; parent: string; transaction?: Transaction }) {
+	async snapshot(params: { id: string; parents: Record<string, string>; transaction?: Transaction }) {
 		return super.snapshot(params);
 	}
 
-	async data(params: { id: string; parent: string; transaction?: Transaction }) {
+	async data(params: { id: string; parents: Record<string, string>; transaction?: Transaction }) {
 		return await super.data(params);
 	}
 }
