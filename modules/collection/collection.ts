@@ -56,7 +56,7 @@ export /*bundle*/ class Collection<DataType> {
 	 */
 	col(params?: { parent?: string }): CollectionReference<DataType> {
 		params = params ? params : {};
-		const { parent } = this.#params(params);
+		const { parent } = this.#params(Object.assign({ col: true }, params));
 		if (!parent) return <CollectionReference<DataType>>db.collection(this.#name);
 
 		return <CollectionReference<DataType>>this.#parent!.col({ parent }).doc(parent).collection(this.#name);
@@ -74,10 +74,10 @@ export /*bundle*/ class Collection<DataType> {
 	 * @param params Object containing optional 'id' and 'parent' fields.
 	 * @returns An object containing the validated 'id' and 'parent' fields.
 	 */
-	#params(params: { id?: string; parent?: string }) {
-		const { id, parent } = params;
+	#params(params: { id?: string; parent?: string; col?: boolean }) {
+		const { id, parent, col } = params;
 
-		if (!id) throw new Error('Parameter "id" was expected but not received.');
+		if (!col && !id) throw new Error('Parameter "id" was expected but not received.');
 
 		// If 'parent' is provided but the collection isn't a sub-collection, throw an error.
 		// This ensures that 'parent' is only provided for sub-collections.
@@ -190,6 +190,10 @@ export /*bundle*/ class Collection<DataType> {
 }
 
 export /*bundle*/ class SubCollection<DataType> extends Collection<DataType> {
+	constructor(name: string, parent: Collection<any>) {
+		super(name, parent);
+	}
+
 	col(params: { parent: string }) {
 		return super.col(params);
 	}

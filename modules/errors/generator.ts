@@ -2,8 +2,8 @@ import { FirestoreErrorManager } from './manager';
 
 export /*bundle*/ enum ErrorCodes {
 	internalError = 1,
-	documentNotFound,
-	documentNotSaved
+	documentNotSaved,
+	documentNotFound = 404
 }
 
 export /*bundle*/ class ErrorGenerator {
@@ -13,7 +13,7 @@ export /*bundle*/ class ErrorGenerator {
 
 	static documentNotFound(collectionName: string, documentId: string, exc?: Error) {
 		return new FirestoreErrorManager(
-			ErrorCodes.internalError,
+			ErrorCodes.documentNotFound,
 			`Error getting document id "${documentId}" from "${collectionName}" collection`,
 			exc
 		);
