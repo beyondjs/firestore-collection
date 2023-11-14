@@ -8,18 +8,18 @@ export class CollectionBatch<DataType> {
 		this.#collection = collection;
 	}
 
-	#doc(params: { id?: string; parent?: string; batch: WriteBatch; data: DataType }) {
-		const { parent, data } = params;
+	#doc(params: { id?: string; parents?: Record<string, string>; batch: WriteBatch; data: DataType }) {
+		const { parents, data } = params;
 		const id = params.id ? params.id : (<any>data).id;
-		return this.#collection.doc({ id, parent });
+		return this.#collection.doc({ id, parents });
 	}
 
-	create(params: { id?: string; parent?: string; batch: WriteBatch; data: DataType }) {
+	create(params: { id?: string; parents?: Record<string, string>; batch: WriteBatch; data: DataType }) {
 		const doc = this.#doc(params);
 		params.batch.create(doc, params.data);
 	}
 
-	set(params: { id?: string; parent?: string; batch: WriteBatch; data: DataType }) {
+	set(params: { id?: string; parents?: Record<string, string>; batch: WriteBatch; data: DataType }) {
 		const doc = this.#doc(params);
 		params.batch.set(doc, params.data);
 	}

@@ -23,8 +23,10 @@ interface IDataParams {
 }
 
 interface IDatasetParams {
-	ids: string[];
-	parents?: Record<string, string>;
+	records: {
+		id: string;
+		parents?: Record<string, string>;
+	}[];
 	transaction?: Transaction;
 }
 
@@ -60,9 +62,9 @@ export /*bundle*/ class Collection<DataType> {
 	col(params?: { parents?: Record<string, string> }): CollectionReference<DataType> {
 		params = params ? params : {};
 		const { parents } = this.#params(Object.assign({ col: true }, params));
-		if (!parents) return <CollectionReference<DataType>>db.collection(this.#name);
+		if (!this.#parent) return <CollectionReference<DataType>>db.collection(this.#name);
 
-		const docId = parents[this.#name];
+		const docId = parents[this.#parent.#name];
 		return <CollectionReference<DataType>>this.#parent!.col({ parents }).doc(docId).collection(this.#name);
 	}
 
@@ -95,8 +97,9 @@ export /*bundle*/ class Collection<DataType> {
 				);
 			}
 
-			while (parent) {
+			while (true) {
 				parent = parent.parent;
+				if (!parent) break;
 				if (!parents.hasOwnProperty(parent.name) || typeof parents[parent.name] !== 'string') {
 					throw new Error(`Id of parent collection "${parent.name}" not set`);
 				}
@@ -148,10 +151,10 @@ export /*bundle*/ class Collection<DataType> {
 	}
 
 	async dataset(params: IDatasetParams): Promise<CollectionDatasetResponseType<DataType>> {
-		const { ids, parents, transaction } = params;
+		const { records, transaction } = params;
 
 		const promises: Promise<Response<ICollectionDataResponse<DataType>>>[] = [];
-		ids.forEach(id => promises.push(this.data({ id, parents, transaction })));
+		records.forEach(({ id, parents }) => promises.push(this.data({ id, parents, transaction })));
 		return await Promise.all(promises);
 	}
 
