@@ -1,5 +1,5 @@
 import { CollectionReference, DocumentReference, DocumentSnapshot, Transaction } from 'firebase-admin/firestore';
-import { Response } from '@beyond-js/response/main';
+import { Response } from '@beyond-js/firestore-collection/response';
 import { ErrorGenerator } from '@beyond-js/firestore-collection/errors';
 import { db } from '@beyond-js/firestore-collection/db';
 import { CollectionBatch } from './batch';

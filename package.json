@@ -1,6 +1,6 @@
 {
 	"name": "@beyond-js/firestore-collection",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"title": "BeyondJS Firestore Collection Package",
 	"description": "The Collections module provides a TypeScript class for simplifying interactions with Firestore collections and documents.",
 	"repository": "https://github.com/beyondjs/firestore-collection",
@@ -13,7 +13,7 @@
 	},
 	"dependencies": {
 		"@beyond-js/kernel": "~0.1.8",
-		"@beyond-js/response": "~0.0.1",
+		"@beyond-js/response": "~0.0.2",
 		"dotenv": "^16.0.3",
 		"firebase-admin": "^11.10.1"
 	},
