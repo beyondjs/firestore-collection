@@ -199,6 +199,29 @@ export /*bundle*/ class Collection<DataType> {
 			return new Response({ error });
 		}
 	}
+
+	async delete(params: {
+		id: string;
+		parents?: Record<string, string>;
+		transaction?: Transaction;
+	}): Promise<Response<{ deleted: boolean }>> {
+		const { transaction, parents } = params;
+		const id = params.id;
+
+		const error = id ? void 0 : ErrorGenerator.invalidParameters(['id']);
+		if (error) return new Response({ error });
+
+		this.#params({ id, parents });
+		const doc = this.doc({ id, parents });
+
+		try {
+			await (transaction ? transaction.delete(doc) : doc.delete());
+			return new Response({ data: { deleted: true } });
+		} catch (exc) {
+			const error = ErrorGenerator.documentNotDeleted(this.#name, id);
+			return new Response({ error });
+		}
+	}
 }
 
 export /*bundle*/ class SubCollection<DataType> extends Collection<DataType> {
@@ -220,5 +243,9 @@ export /*bundle*/ class SubCollection<DataType> extends Collection<DataType> {
 
 	async data(params: { id: string; parents: Record<string, string>; transaction?: Transaction }) {
 		return await super.data(params);
+	}
+
+	async delete(params: { id: string; parents: Record<string, string>; transaction?: Transaction }) {
+		return await super.delete(params);
 	}
 }
