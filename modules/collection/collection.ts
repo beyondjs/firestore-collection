@@ -1,10 +1,11 @@
 import { CollectionReference, DocumentReference, DocumentSnapshot, Transaction } from 'firebase-admin/firestore';
+import type { PartialWithFieldValue } from 'firebase-admin/firestore';
 import { Response } from '@beyond-js/firestore-collection/response';
 import { ErrorGenerator } from '@beyond-js/firestore-collection/errors';
 import { db } from '@beyond-js/firestore-collection/db';
 import { CollectionBatch } from './batch';
 import type { FirestoreErrorManager } from '@beyond-js/firestore-collection/errors';
-
+ 
 export /*bundle*/ interface ICollectionDataResponse<DataType> {
 	doc?: DocumentReference<DataType>;
 	snapshot?: DocumentSnapshot<DataType>;
@@ -182,7 +183,7 @@ export /*bundle*/ class Collection<DataType> {
 	async merge(params: {
 		id?: string;
 		parents?: Record<string, string>;
-		data: Partial<DataType>;
+		data: PartialWithFieldValue<DataType>;
 		transaction?: Transaction;
 	}): Promise<Response<{ stored: boolean }>> {
 		const { transaction, parents, data } = params;
