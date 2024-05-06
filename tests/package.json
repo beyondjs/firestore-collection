@@ -1,0 +1,53 @@
+{
+	"name": "@beyond-js/firestore-collection-test",
+	"version": "0.0.1",
+	"title": "BeyondJS Firestore Collection Testing Package",
+	"description": "The Collections module provides a TypeScript class for simplifying interactions with Firestore collections and documents.",
+	"repository": "https://github.com/beyondjs/firestore-collection",
+	"license": "MIT",
+	"scripts": {
+		"start": "node --enable-source-maps runners/empty.js"
+	},
+	"modules": {
+		"path": "modules"
+	},
+	"libraries": {
+		"imports": [
+			"@beyond-js/firestore-collection"
+		]
+	},
+	"dependencies": {
+		"@beyond-js/kernel": "~0.1.8",
+		"@beyond-js/response": "~0.0.2"
+	},
+	"devDependencies": {
+		"@beyond-js/local": "~0.1.3",
+		"@beyond-js/bee": "^0.0.6",
+		"@types/node": "~20.6.0"
+	},
+	"deployment": {
+		"distributions": [
+			{
+				"name": "node",
+				"environment": "local",
+				"platform": "node",
+				"ports": {
+					"bundles": 8000,
+					"http": 8001,
+					"inspect": 8002
+				}
+			},
+			{
+				"name": "node-ts",
+				"environment": "local",
+				"platform": "node",
+				"ts": {
+					"compiler": "tsc"
+				},
+				"ports": {
+					"bundles": 8800
+				}
+			}
+		]
+	}
+}

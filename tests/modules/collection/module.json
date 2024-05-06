@@ -1,0 +1,6 @@
+{
+	"name": "collection",
+	"platforms": ["node"],
+	"bundle": "ts",
+	"files": "*"
+}
