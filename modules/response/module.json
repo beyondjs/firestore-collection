@@ -1,6 +1,6 @@
 {
 	"name": "response",
-	"platforms": ["node"],
+	"platforms": ["*"],
 	"bundle": "ts",
 	"files": "*"
 }

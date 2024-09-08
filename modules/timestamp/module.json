@@ -1,6 +1,6 @@
 {
 	"name": "timestamp",
-	"platforms": ["node", "backend"],
+	"platforms": ["*"],
 	"ts": {
 		"files": ["*"]
 	}
