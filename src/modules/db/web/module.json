@@ -1,6 +1,6 @@
 {
 	"name": "db",
-	"platforms": ["node"],
+	"platforms": ["web"],
 	"bundle": "ts",
 	"files": "*"
 }

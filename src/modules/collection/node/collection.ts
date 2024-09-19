@@ -5,7 +5,7 @@ import { ErrorGenerator } from '@beyond-js/firestore-collection/errors';
 import { db } from '@beyond-js/firestore-collection/db';
 import { CollectionBatch } from './batch';
 import type { FirestoreErrorManager } from '@beyond-js/firestore-collection/errors';
- 
+
 export /*bundle*/ interface ICollectionDataResponse<DataType> {
 	doc?: DocumentReference<DataType>;
 	snapshot?: DocumentSnapshot<DataType>;
@@ -111,10 +111,30 @@ export /*bundle*/ class Collection<DataType> {
 	}
 
 	doc(params: { id: string; parents?: Record<string, string> }): DocumentReference<DataType> {
-		const { id } = this.#params(params);
-		return this.col(params).doc(id!);
+		const { id, parents } = this.#params(params);
+		return this.col({ parents }).doc(id!);
 	}
 
+	/**
+	 * Fetches the document snapshot from Firestore.
+	 *
+	 * If a transaction is provided, this method uses the transaction context to fetch the document,
+	 * allowing it to be part of an ongoing transaction managed by the caller. This is particularly useful
+	 * when multiple read/write operations need to be atomic.
+	 *
+	 * - If `transaction` is provided, it calls `transaction.get(docRef)` to retrieve the document within the transaction.
+	 * - If `transaction` is not provided, it simply fetches the document using `.doc(docRef)`.
+	 *
+	 * This method is designed to work within the context of a transaction created and managed by the caller.
+	 * The caller is expected to have started the transaction using `runTransaction` and pass the transaction object
+	 * to this method. If the transaction is not provided, the method defaults to a regular document fetch.
+	 *
+	 * @param params - An object containing:
+	 *  - `id`: The document ID to fetch.
+	 *  - `parents`: An optional object mapping parent collection names to their IDs (used for subcollections).
+	 *  - `transaction`: An optional transaction object, which should be part of a `runTransaction` context if provided.
+	 * @returns A `Response` object containing either the document reference and snapshot data or an error if the document is not found.
+	 */
 	async snapshot(params: {
 		id: string;
 		parents?: Record<string, string>;

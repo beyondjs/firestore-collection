@@ -15,6 +15,7 @@
 		"@beyond-js/kernel": "~0.1.9",
 		"@beyond-js/response": "~0.0.3",
 		"dotenv": "^16.4.5",
+		"firebase": "^10.12.1",
 		"firebase-admin": "^12.1.0"
 	},
 	"devDependencies": {
@@ -43,6 +44,25 @@
 				},
 				"ports": {
 					"bundles": 8800
+				}
+			},
+			{
+				"name": "web",
+				"environment": "local",
+				"platform": "web",
+				"ports": {
+					"bundles": 8001
+				}
+			},
+			{
+				"name": "web-ts",
+				"environment": "local",
+				"platform": "web",
+				"ts": {
+					"compiler": "tsc"
+				},
+				"ports": {
+					"bundles": 8801
 				}
 			}
 		]
