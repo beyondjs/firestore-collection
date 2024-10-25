@@ -20,6 +20,7 @@ jobs:
                   registry-url: 'https://registry.npmjs.org'
 
             - name: Install dependencies
+              working-directory: src
               run: npm install
 
             - name: Install BeyondJS globally
