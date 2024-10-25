@@ -1,4 +1,4 @@
-# Collections Module
+# BeyondJS Firestore Collection
 
 ## Overview
 
